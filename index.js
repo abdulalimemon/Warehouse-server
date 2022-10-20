@@ -16,17 +16,21 @@ app.get('/', (req, res) => {
 });
 
 // MongoDb
-
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.l8c46yf.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  console.log(collection);
-  // perform actions on the collection object
-  client.close();
-});
+
+// Mongodb APIs
+async function run() {
+    try {
+        await client.connect();
+        const database = client.db("warehouse-user ")
+        const collection = database.collection("devices");
+      
+    } finally {
+    //   await client.close();
+    }
+  }
+  run().catch(console.dir);
 
 
 // Listing Port
