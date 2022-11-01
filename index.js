@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const app = express();
@@ -23,17 +23,40 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        const database = client.db("warehouse-user ")
-        const collection = database.collection("devices");
-      
+        const database = client.db("warehouse-user")
+        const inventorycollection = database.collection("InventoryItem");
+        const brandcollection = database.collection("BrandImage");
+
+        // Inventory API
+        app.get('/inventory', async (req, res) => {
+            const query = {};
+            const cursor = inventorycollection.find(query);
+            const inventoris = await cursor.toArray();
+            res.send(inventoris);
+        });
+
+        app.get('/inventory/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const inventoryItem = await inventorycollection.findOne(query);
+            res.send(inventoryItem);
+        });
+
+        app.get('/brand', async (req, res) => {
+            const query = {};
+            const cursor = brandcollection.find(query);
+            const brandImages = await cursor.toArray();
+            res.send(brandImages);
+        });
+
     } finally {
-    //   await client.close();
+        //   await client.close();
     }
-  }
-  run().catch(console.dir);
+}
+run().catch(console.dir);
 
 
 // Listing Port
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log('Listening to port', port);
 })
